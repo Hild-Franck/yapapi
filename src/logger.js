@@ -23,7 +23,7 @@ const customLevels = {
 	}
 }
 
-const timeFormat = 'DD-MM-YYYY HH:mm:ss'
+const timeFormat = 'DD/MM/YYYY HH:mm:ss'
 
 const format = process.env.NODE_ENV === 'production'
 	? combine(timestamp({ format: timeFormat }), json())
