@@ -1,0 +1,31 @@
+{
+	"env": {
+		"browser": true,
+		"commonjs": true,
+		"es6": true,
+		"node": true
+	},
+	"extends": "eslint:recommended",
+	"parserOptions": {
+		"sourceType": "module",
+		"ecmaVersion": 2018
+	},
+	"rules": {
+		"max-lines-per-function": ["warn", 25],
+		"max-lines": ["warn", 80],
+		"max-len": ["warn", { "code": 80,  "tabWidth": 2 }],
+		"indent": [
+			"error",
+			"tab"
+		],
+		"linebreak-style": [
+			"error",
+			"unix"
+		],
+		"semi": [
+			"error",
+			"never"
+		],
+		"no-console": "error"
+	}
+}

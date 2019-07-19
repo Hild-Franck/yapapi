@@ -1,0 +1,52 @@
+{
+  "name": "express-api-boilerplate",
+  "version": "0.0.1",
+  "description": "Boilerplate of an express-mongo API",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint src/",
+    "dev": "NODE_ENV=test ava --verbose --watch",
+    "pretest": "npm run lint",
+    "test": "NODE_ENV=test nyc ava --verbose",
+    "posttest": "nyc report --reporter=text && nyc check-coverage --lines 75 --functions 75 --branches 75",
+    "start": "node dist/index.js",
+    "start:develop": "NODE_ENV=development nodemon --exec babel-node src/index.js",
+    "build": "babel src --out-dir dist"
+  },
+  "keywords": [
+    "express",
+    "nodejs",
+    "api",
+    "boilerplate"
+  ],
+  "author": "Franck Hild <franck.hild@gmail.com>",
+  "license": "MIT",
+  "dependencies": {},
+  "ava": {
+    "files": [
+      "test/unit/**/*.test.js"
+    ],
+    "require": [
+      "@babel/register"
+    ]
+  },
+  "nyc": {
+    "exclude": [
+      "src/configs/*",
+      "test/*"
+    ]
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.5.5",
+    "@babel/core": "^7.5.5",
+    "@babel/node": "^7.5.5",
+    "@babel/plugin-transform-runtime": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
+    "@babel/register": "^7.5.5",
+    "ava": "^2.2.0",
+    "babel-core": "^6.26.3",
+    "eslint": "^6.0.1",
+    "nodemon": "^1.19.1",
+    "nyc": "^14.1.1"
+  }
+}
