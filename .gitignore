@@ -1,3 +1,17 @@
 node_modules/
 dist/
 coverage/
+.nyc_output/
+
+ncp-debug.log
+npm-debug.log
+yarn-error.log
+.babelCache
+
+#IDE specifics
+.idea
+.jshintrc
+.vscode
+
+#MAC OS
+.DS_Store
