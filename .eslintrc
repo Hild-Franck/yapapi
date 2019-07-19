@@ -11,6 +11,7 @@
 		"ecmaVersion": 2018
 	},
 	"rules": {
+		"require-atomic-updates": ["off"],
 		"max-lines-per-function": ["warn", 25],
 		"max-lines": ["warn", 80],
 		"max-len": ["warn", { "code": 80,  "tabWidth": 2 }],

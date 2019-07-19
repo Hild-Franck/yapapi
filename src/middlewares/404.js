@@ -1,4 +1,4 @@
-const endPointNotFound = (req, res) => {
+const endpointNotFound = (req, res) => {
 	res.status(404)
 	res.json({
 		statusCode: 404,
@@ -7,4 +7,4 @@ const endPointNotFound = (req, res) => {
 	})
 }
 
-export default endPointNotFound
+export default endpointNotFound
