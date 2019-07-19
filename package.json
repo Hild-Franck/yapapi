@@ -21,7 +21,9 @@
   ],
   "author": "Franck Hild <franck.hild@gmail.com>",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "winston": "^3.2.1"
+  },
   "ava": {
     "files": [
       "test/unit/**/*.test.js"
