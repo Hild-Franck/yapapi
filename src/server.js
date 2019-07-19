@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser'
 import morgan from 'morgan'
 
 import logger from './logger'
+import routes from './routes'
 import errorHandler from './middlewares/errorHandler'
 
 const port = process.env.PORT || 9000
@@ -16,6 +17,7 @@ app.use(morgan(logType, { stream: logger.stream }))
 app.use(cors())
 app.use(bodyParser.json())
 app.use(cookieParser())
+routes.create(app)
 app.use(errorHandler)
 
 const server = {
