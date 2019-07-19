@@ -7,6 +7,7 @@ import morgan from 'morgan'
 import logger from './logger'
 import routes from './routes'
 import errorHandler from './middlewares/errorHandler'
+import endPointNotFound from './middlewares/404'
 
 const port = process.env.PORT || 9000
 const logType = process.env.NODE_ENV === "production" ? "tiny" : "dev"
@@ -19,6 +20,7 @@ app.use(bodyParser.json())
 app.use(cookieParser())
 routes.create(app)
 app.use(errorHandler)
+app.use(endPointNotFound)
 
 const server = {
 	start: () => app.listen(port, () => logger.info(
