@@ -8,13 +8,11 @@ import logger from '../logger'
 
 const database = {
 	initialized: false, // Just to make sure `database.init` is never called twice
+	migrationFolder: path.join(__dirname, 'migrations'),
 	migrate: async (store, migrationModel, migration) => {
 		await store.init(migrationModel)
 		const set = await new Promise((res, rej) => load(
-			{
-				stateStore: store,
-				migrationsDirectory: path.join(__dirname, 'migrations')
-			},
+			{ stateStore: store, migrationsDirectory: database.migrationFolder },
 			(err, set) => err ? rej(err) : res(set)
 		))
 		const migrationDirection = store.getMigrationDirection(migration)
@@ -31,6 +29,7 @@ const database = {
 	init: async config => {
 		try {
 			if (database.initialized) throw new Error("Database already initialized")
+			if (config.migrationFolder) database.migrationFolder = config.migrationFolder
 			const uri = `mongodb://${config.host}/${config.database}`
 			logger.info('The database will be running with the following config:', {
 				label: 'database', meta: { options: config.options }
@@ -53,3 +52,5 @@ const database = {
 }
 
 export default database
+
+export { models }
