@@ -5,9 +5,11 @@ import { load } from 'migrate'
 import migrationStore from './migrationStore.js'
 import models from './models'
 import logger from '../logger'
+import createError, { DB_ALREADY_INITIALIZED } from '../errors'
 
 const database = {
 	initialized: false, // Just to make sure `database.init` is never called twice
+	models,
 	migrationFolder: path.join(__dirname, 'migrations'),
 	migrate: async (store, migrationModel, migration) => {
 		await store.init(migrationModel)
@@ -28,7 +30,7 @@ const database = {
 	},
 	init: async config => {
 		try {
-			if (database.initialized) throw new Error("Database already initialized")
+			if (database.initialized) throw new createError(DB_ALREADY_INITIALIZED)
 			if (config.migrationFolder) database.migrationFolder = config.migrationFolder
 			const uri = `mongodb://${config.host}/${config.database}`
 			logger.info('The database will be running with the following config:', {
