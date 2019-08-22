@@ -5,6 +5,4 @@ const get = wrap(async (req, res) => {
 	sendResponse(res, state, { state })
 })
 
-const health = { get }
-
-export default health
+export default { get }

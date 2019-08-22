@@ -1,5 +1,10 @@
 import methods from './methods'
 
+const transform = (doc, ret) => {
+	delete ret.salt
+	delete ret.password
+}
+
 const createSchema = mongoose => new mongoose.Schema({
 	roles: { type: [String], default: ['user'] },
 	email: { type: String, required: true, unique: true },
@@ -7,8 +12,8 @@ const createSchema = mongoose => new mongoose.Schema({
 	password: { type: String, required: true },
 	salt: { type: String, required: true }
 }, {
-	toObject: { virtuals: true },
-	toJSON: { virtuals: true },
+	toObject: { virtuals: true, transform },
+	toJSON: { virtuals: true, transform },
 })
 
 const user = mongoose => {
