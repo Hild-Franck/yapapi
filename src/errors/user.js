@@ -12,3 +12,13 @@ export const EMAIL_CONFLICT = {
 	error: 'Email already in use',
 	statusCode: 429
 }
+
+export const NO_USER = {
+	error: 'User does not exist',
+	statusCode: 404
+}
+
+export const WRONG_PASSWORD = {
+	error: 'Wrong password',
+	statusCode: 401
+}

@@ -1,11 +1,14 @@
 import { sha256 } from 'hash.js'
 
 import { wrap, sendResponse } from '../utils'
+import token from '../token'
 import { models } from '../database'
 import createError, {
 	INVALID_AUTH_FORM,
 	USER_CONFLICT,
-	EMAIL_CONFLICT
+	EMAIL_CONFLICT,
+	NO_USER,
+	WRONG_PASSWORD
 } from '../errors'
 
 const signup = wrap(async (req, res) => {
@@ -19,11 +22,11 @@ const signup = wrap(async (req, res) => {
 		throw createError(EMAIL_CONFLICT, { email }, 'auth.signup')
 
 	const salt = Math.random().toString(36).substring(2, 15)
-	const hashedPassword = sha256().update(`${salt}${password}`).digest('hex')
+	const hashedPwd = sha256().update(`${salt}${password}`).digest('hex')
 
 	const user = await models.user.create({
 		email,
-		password: hashedPassword,
+		password: hashedPwd,
 		salt,
 		username
 	})
@@ -32,4 +35,24 @@ const signup = wrap(async (req, res) => {
 
 })
 
-export default { signup }
+const login = wrap(async (req, res) => {
+	const { username, password } = req.body
+
+	if(!username || !password)
+		throw createError(INVALID_AUTH_FORM, { body: req.body }, 'auth.login')
+
+	const user = await models.user.findOne({ username })
+
+	if (!user) throw createError(NO_USER, { body: req.body }, 'auth.login')
+
+	const hashedPwd = sha256().update(`${user.salt}${password}`).digest('hex')
+
+	if (hashedPwd !== user.password)
+		throw createError(WRONG_PASSWORD, { body: req.body }, 'auth.login')
+
+	res.cookie('jwt', token.create({ id: user._id, username: user.username }))
+	sendResponse(res, "User retrieved", user)
+
+})
+
+export default { signup, login }
