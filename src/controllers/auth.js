@@ -55,4 +55,9 @@ const login = wrap(async (req, res) => {
 
 })
 
-export default { signup, login }
+const me = wrap(async (req, res) => {
+	sendResponse(res, '', req.user)
+
+})
+
+export default { signup, login, me }
