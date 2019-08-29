@@ -10,4 +10,5 @@ const createError = (errorData, meta, label) => {
 
 export * from './database'
 export * from './user'
+export * from './authorization'
 export default createError
