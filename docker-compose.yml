@@ -1,0 +1,25 @@
+version: "2"
+
+services:
+  db:
+    image: mongo
+    expose:
+      - "27017"
+    networks:
+      - app-network
+
+  app:
+    build: .
+    ports:
+      - "9000:9000"
+    depends_on:
+      - db
+    environment:
+      NODE_ENV: "development"
+      SECRET: "secret"
+      MONGO_HOST: "db"
+    networks:
+      - app-network
+
+networks:
+  app-network:
