@@ -21,7 +21,7 @@ const authorize = scopes => wrap(async (req, res, next) => {
 	const userToken = authorization ? authorization.substring(7) : ''
 	if (!userToken) throw createError(NO_TOKEN)
 	const jwtPayload = await checkToken(userToken)
-	const user = await database.user.findById(jwtPayload.id)
+	const user = await database.models.user.findById(jwtPayload.id)
 	
 	if (scopes && !user.isInScope(scopes)) throw createError(LOW_CLEARANCE)
 
