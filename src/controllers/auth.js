@@ -3,6 +3,7 @@ import { sha256 } from 'hash.js'
 import { wrap, sendResponse } from '../utils'
 import token from '../token'
 import { models } from '../database'
+import { dbConfig } from '../configs'
 import createError, {
 	INVALID_AUTH_FORM,
 	USER_CONFLICT,
@@ -22,7 +23,9 @@ const signup = wrap(async (req, res) => {
 		throw createError(EMAIL_CONFLICT, { email }, 'auth.signup')
 
 	const salt = Math.random().toString(36).substring(2, 15)
-	const hashedPwd = sha256().update(`${salt}${password}`).digest('hex')
+	const hashedPwd = sha256()
+		.update(`${dbConfig.pepper}${salt}${password}`)
+		.digest('hex')
 
 	const user = await models.user.create({
 		email,
