@@ -9,6 +9,7 @@ import createError, { DB_ALREADY_INITIALIZED } from '../errors'
 
 const database = {
 	initialized: false, // Just to make sure `database.init` is never called twice
+	connection: {},
 	models,
 	migrationFolder: path.join(__dirname, 'migrations'),
 	migrate: async (store, migrationModel, migration) => {
@@ -36,7 +37,7 @@ const database = {
 			logger.info('The database will be running with the following config:', {
 				label: 'database', meta: { options: config.options }
 			})
-			await mongoose.connect(uri, config.options)
+			database.connection = (await mongoose.connect(uri, config.options)).connection
 			database.initialized = true
 			models.create(mongoose)
 			try {
