@@ -9,7 +9,8 @@ import createError, {
 	USER_CONFLICT,
 	EMAIL_CONFLICT,
 	NO_USER,
-	WRONG_PASSWORD
+	WRONG_PASSWORD,
+	PASSWORD_TOO_LONG
 } from '../errors'
 
 const signup = wrap(async (req, res) => {
@@ -22,6 +23,8 @@ const signup = wrap(async (req, res) => {
 	if (await models.user.findOne({ email }))
 		throw createError(EMAIL_CONFLICT, { email }, 'auth.signup')
 
+	if(password.length > 50)
+		throw createError(PASSWORD_TOO_LONG, 'auth.signup')
 	const salt = Math.random().toString(36).substring(2, 15)
 	const hashedPwd = sha256()
 		.update(`${dbConfig.pepper}${salt}${password}`)

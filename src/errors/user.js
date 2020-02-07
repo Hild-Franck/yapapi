@@ -22,3 +22,8 @@ export const WRONG_PASSWORD = {
 	error: 'Wrong password',
 	statusCode: 401
 }
+
+export const PASSWORD_TOO_LONG = {
+	error: 'Password can\'t exceed 50 characters',
+	statusCode: 400
+}
