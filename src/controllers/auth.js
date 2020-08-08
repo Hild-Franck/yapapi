@@ -66,4 +66,9 @@ const me = wrap(async (req, res) => {
 
 })
 
-export default { signup, login, me }
+const logout = wrap(async (req, res) => {
+	res.cookie('jwt', '')
+	res.end()
+})
+
+export default { signup, login, me, logout }

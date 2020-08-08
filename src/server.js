@@ -15,7 +15,7 @@ const logType = process.env.NODE_ENV === "production" ? "tiny" : "dev"
 const app = express()
 
 app.use(morgan(logType, { stream: logger.stream }))
-app.use(cors())
+app.use(cors({ origin: 'http://localhost:3000', credentials: true }))
 app.use(bodyParser.json())
 app.use(cookieParser())
 routes.create(app)

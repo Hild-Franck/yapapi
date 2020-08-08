@@ -11,7 +11,7 @@ const create = wrap(async (req, res) => {
 
 const remove = wrap(async (req, res) => {
 	const { id } = req.params
-	const query = { day: id }
+	const query = { date: id }
 
 	const result = await models.mood.deleteOne(query)
 	
@@ -22,7 +22,7 @@ const remove = wrap(async (req, res) => {
 
 const get = wrap(async (req, res) => {
 	const { id } = req.params
-	const query = { day: id }
+	const query = { date: id }
 
 	const mood = await models.mood.findOne(query)
 	sendResponse(res, '', mood)
@@ -30,10 +30,12 @@ const get = wrap(async (req, res) => {
 
 const update = wrap(async (req, res) => {
 	const { score } = req.body
-	const { id } = req.params
-	const query = { day: id }
+	const [ year, month, day ] = req.params.id.split("-")
+	const date = Date.UTC(year, month-1, day)
+	const query = { date }
 
-	const mood = await models.mood.update(query, { score })
+	await models.mood.updateOne(query, { score })
+	const mood = await models.mood.findOne(query)
 
 	sendResponse(res, '', mood)
 })
@@ -42,8 +44,8 @@ const getAll = wrap(async (req, res) => {
 	const { month, year, score } = req.query
 	const query = {}
 	if (month || year){
-		const dateRange = getDateRange(month, year)
-		query.day = { $gte: dateRange.start, $lte: dateRange.end }
+		const dateRange = getDateRange(Number(month), year)
+		query.date = { $gte: dateRange.start, $lte: dateRange.end }
 	}
 	
 	if (score) query.score = score

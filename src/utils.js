@@ -23,7 +23,7 @@ export const createRestRoutes = (router, controller) =>
 
 export const getDateRange = (month, year) => {
 	if (!year) year = (new Date()).getFullYear()
-	const mod = month ? 0 : 11
+	const mod = month ? 0 : 12
 	month = month || 1
 
 	return { start: Date.UTC(year, month-1, 1), end: Date.UTC(year, month+mod, 0) }
