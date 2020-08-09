@@ -27,10 +27,9 @@ const get = wrap(async (req, res) => {
 })
 
 const update = wrap(async (req, res) => {
-	const { score } = req.body
 	const { id } = req.params
 
-	const note = await models.note.findByIdAndUpdate(id, { score }, { new: true })
+	const note = await models.note.findByIdAndUpdate(id, req.body, { new: true })
 
 	sendResponse(res, 'Note updated !', note)
 })
