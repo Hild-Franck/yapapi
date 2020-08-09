@@ -1,5 +1,6 @@
 const createSchema = ({ Schema }) => new Schema({
 	text: { type: String, required: true },
+	important: { type: Boolean, default: false },
 	date: { type: Date, required: true },
 	user: { type: Schema.Types.ObjectId, required: true }
 }, {
