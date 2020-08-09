@@ -47,7 +47,7 @@ const getAll = wrap(async (req, res) => {
 		query.date = { $gte: dateRange.start, $lte: dateRange.end }
 	}
 
-	const notes = await models.mood.find(query)
+	const notes = await models.note.find(query)
 
 	sendResponse(res, '', notes)
 })
