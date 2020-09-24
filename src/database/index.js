@@ -33,7 +33,7 @@ const database = {
 		try {
 			if (database.initialized) throw new createError(DB_ALREADY_INITIALIZED)
 			if (config.migrationFolder) database.migrationFolder = config.migrationFolder
-			const uri = `mongodb://${config.host}/${config.database}`
+			const uri = `mongodb://${config.username}:${config.password}${config.host}/${config.database}`
 			logger.info('The database will be running with the following config:', {
 				label: 'database', meta: { options: config.options }
 			})
