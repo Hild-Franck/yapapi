@@ -52,7 +52,7 @@ const getAll = wrap(async (req, res) => {
 	} else if (month || year) {
 		const dateRange = getDateRange(Number(month), year)
 		query = query.concat([{
-			$project: { dates: {
+			$project: { desc: 1, dates: {
 				$filter: { input: "$dates", as: "dates", cond: { $and: [
 					{ $gte: ["$$dates.date", new Date(dateRange.start)] },
 					{ $lte: ["$$dates.date", new Date(dateRange.end)] }
@@ -78,7 +78,7 @@ const achieve = wrap(async (req, res) => {
 		await models.habit.findOneAndUpdate({ _id: id, user: req.user.id }, { $push: { dates: { date, done } } })
 	}
 	
-	sendResponse(res, '', { date, done })
+	sendResponse(res, '', { date: new Date(y, m-1, d), done, _id: id })
 })
 
 export default { create, update, remove, get, getAll, achieve }
