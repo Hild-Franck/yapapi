@@ -8,11 +8,11 @@ import { app } from '../../../src/server'
 import token from '../../../src/token'
 
 const mongodb = new MongodbMemoryServer({ dbName: 'billing' })
-const moodToGet = { score: 4, day: '2001-01-01' }
-const moodTGoetAgain = { score: 4, day: '2001-01-05' }
-const moodToDelete = { score: 3, day: '2001-01-02' }
-const moodToCreate = { score: 2, day: '2001-01-03' }
-const moodToUpdate = { score: 1, day: '2001-01-04' }
+const moodToGet = { score: 4, date: '2001-01-01' }
+const moodTGoetAgain = { score: 4, date: '2001-01-05' }
+const moodToDelete = { score: 3, date: '2001-01-02' }
+const moodToCreate = { score: 2, date: '2001-01-03' }
+const moodToUpdate = { score: 1, date: '2001-01-04' }
 const user = {
 	email: 'testy@test.com',
 	username: 'Testy',
@@ -50,7 +50,7 @@ ava('post `/mood` should create and return a mood', async t => {
 		.set('Authorization', `Bearer ${userToken}`)
 		.send(moodToCreate)
 	
-	const retrievedMood = await models.mood.findOne({ day: new Date(moodToCreate.day) })
+	const retrievedMood = await models.mood.findOne({ date: new Date(moodToCreate.date) })
 	
 	t.is(res.statusCode, 200)
 	t.truthy(retrievedMood)
@@ -58,10 +58,10 @@ ava('post `/mood` should create and return a mood', async t => {
 
 ava('delete `/mood/:day` should create and return a mood', async t => {
 	const res = await request(app)
-		.delete(`/mood/${moodToDelete.day}`)
+		.delete(`/mood/${moodToDelete.date}`)
 		.set('Authorization', `Bearer ${userToken}`)
 	
-	const retrievedMood = await models.mood.findOne({ day: new Date(moodToDelete.day) })
+	const retrievedMood = await models.mood.findOne({ date: new Date(moodToDelete.date) })
 	
 	t.is(res.statusCode, 200)
 	t.falsy(retrievedMood)
@@ -69,10 +69,10 @@ ava('delete `/mood/:day` should create and return a mood', async t => {
 
 ava('get `/mood/:day` should create and return a mood', async t => {
 	const res = await request(app)
-		.get(`/mood/${moodToGet.day}`)
+		.get(`/mood/${moodToGet.date}`)
 		.set('Authorization', `Bearer ${userToken}`)
 	
-	const retrievedMood = await models.mood.findOne({ day: new Date(moodToGet.day) })
+	const retrievedMood = await models.mood.findOne({ date: new Date(moodToGet.date) })
 	
 	t.is(res.statusCode, 200)
 	t.truthy(retrievedMood)
@@ -80,11 +80,11 @@ ava('get `/mood/:day` should create and return a mood', async t => {
 
 ava('post `/mood/:day` should create and return a mood', async t => {
 	const res = await request(app)
-		.post(`/mood/${moodToUpdate.day}`)
+		.post(`/mood/${moodToUpdate.date}`)
 		.set('Authorization', `Bearer ${userToken}`)
 		.send({score: -4})
 	
-	const retrievedMood = await models.mood.findOne({ day: new Date(moodToUpdate.day) })
+	const retrievedMood = await models.mood.findOne({ date: new Date(moodToUpdate.date) })
 	
 	t.is(res.statusCode, 200)
 	t.is(retrievedMood.score, -4)
