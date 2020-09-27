@@ -1,13 +1,14 @@
-const migration = mongoose => {
-	const Migration = new mongoose.Schema({
-		lastRun: { type: String, required: true },
-		migrations: [{
-			title: { type: String, required: true },
-			timestamp: { type: Date, required: true }
-		}],
-		migrating: { type: Boolean, default: true }
-	})
-	return mongoose.model('Migration', Migration)
-}
+import mongoose from 'mongoose'
+
+const Migration = new mongoose.Schema({
+	lastRun: { type: String },
+	migrations: [{
+		title: { type: String, required: true },
+		timestamp: { type: Date }
+	}],
+	migrating: { type: Boolean, default: true }
+})
+
+const migration = mongoose.model('Migration', Migration)
 
 export default migration

@@ -18,45 +18,55 @@ const mongodb = new MongodbMemoryServer({ dbName: 'db' })
 ava.before(async () => {
 	const uri = await mongodb.getConnectionString()
 	await mongoose.connect(uri, { database: 'db' })
-	models.create(mongoose)
 })
 
-ava.serial('First init should not return a current state', async t => {
-	await migrationStore.init(models.migration)
-	t.is(migrationStore.currentState, null)
+ava.serial('return a state without migrations on init', async t => {
+	const state = await migrationStore.init(models.migration)
+	t.is(state.lastRun, "")
+	t.true(state.migrating)
 })
 
-ava.serial('First migration should migrate to "up"', t => {
-	t.is(migrationStore.getMigrationDirection(), 'up')
+ava.serial('should return "up" migration direction on first migration', async t => {
+	const state = await migrationStore.init(models.migration)
+	t.is(migrationStore.getMigrationDir(state), 'up')
 })
 
-ava.serial('First migration should load an empty store', async t => {
-	const store = await new Promise(res => migrationStore.load((err, store) => res(store)))
-	t.is(Object.keys(store).length, 0)
+ava.serial('should load provided state', async t => {
+	const state = await migrationStore.init(models.migration)
+	const store = migrationStore.create(state)
+	const returnedState = await new Promise(res => store.load((err, store) => res(store)))
+	t.is(state, returnedState)
 })
 
-ava.serial('First migration should create migration state on save', async t => {
-	await new Promise(res => migrationStore.save(mockSet, res))
-	t.false(migrationStore.currentState.migrating)
+ava.serial('should create migration state on save', async t => {
+	const state = await migrationStore.init(models.migration)
+	const store = migrationStore.create(state)
+
+	await new Promise(res => store.save(mockSet, res))
+
+	const updatedState = await models.migration.findOne()
+
+	t.false(updatedState.migrating)
+	t.is(updatedState.migrations.length, 1)
 })
 
-ava.serial('should retrieve the state store on init', async t => {
-	await migrationStore.init(models.migration)
-	t.true(migrationStore.currentState.migrating)
+ava.serial('should retrieve the previously created store on init', async t => {
+	const state = await migrationStore.init(models.migration)
+	t.true(state.migrating)
+	t.is(state.migrations.length, 1)
 })
 
-ava.serial('should return no diretion for the same migration', t => {
-	t.is(migrationStore.getMigrationDirection(mockSet.lastRun), null)
-})
-
-ava.serial('should load the current state', async t => {
-	const store = await new Promise(res => migrationStore.load((err, store) => res(store)))
-	t.true(store.migrating)
+ava.serial('should return no direction for the same migration', async t => {
+	const state = await migrationStore.init(models.migration)
+	
+	t.is(migrationStore.getMigrationDir(state, mockSet.lastRun), "")
 })
 
 ava.serial('should save the new state', async t => {
+	const state = await migrationStore.init(models.migration)
+	const store = migrationStore.create(state)
 	const newLastRun = `${mockSet.lastRun}42`
-	await new Promise(res => migrationStore.save({...mockSet, lastRun: newLastRun}, res))
+	await new Promise(res => store.save({...mockSet, lastRun: newLastRun}, res))
 	const migration = await models.migration.findOne()
 	t.is(migration.lastRun, newLastRun)
 })

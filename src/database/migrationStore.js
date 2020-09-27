@@ -1,58 +1,42 @@
 import logger from '../logger.js'
 
-const migrationStore =  {
-	currentState: null,
-	create: null,
-	
-	init: async migrationModel => {
-		migrationStore.model = migrationModel
-		const currentState = await migrationStore.model.findOne()
-		if (currentState) {
-			currentState.migrating = true
-			await currentState.save()
-		}
-		migrationStore.currentState = currentState
-		logger.info(`Migration store initialized`, {
-			label: 'migration', meta: migrationStore.currentState
-		})
-	},
-
-	getMigrationDirection: newMigration => {
-		const currentState = migrationStore.currentState
-		if (!currentState) return 'up'
-		if (currentState.lastRun === newMigration || currentState.migrating)
-			return null
-		return currentState.migrations.map(m => m.title).includes(newMigration)
-			? 'down'
-			: 'up'
-	},
-
-	load: fn => {
-		if (!migrationStore.currentState) {
-			logger.warning(
-				'No migration found. If this is the first migration, it is normal',
-				{ label: 'migration' }
-			)
-			return fn(null, {})
-		}
-
-		fn(null, migrationStore.currentState)
-	},
-
-	save: async (set, fn) => {
-		if (!migrationStore.currentState) {
-			migrationStore.currentState = await migrationStore.model.create({
-				...set, migrating: false
-			})
-		} else {
-			migrationStore.currentState.migrating = false
-			migrationStore.currentState.lastRun =  set.lastRun
-			migrationStore.currentState.migrations =  set.migrations
-			
-			await migrationStore.currentState.save()
-		}
-		fn()
+const init = async migrationModel => {
+	const state = await migrationModel.findOne()
+	if (!state) return migrationModel.create({ migrating: true, lastRun: "" })
+	if (state.migrating) {
+		logger.warning("Migration already in progress", { label: "migration.init" })
+		return state
 	}
+	state.migrating = true
+	await state.save()
+	return state	
 }
 
-export default migrationStore
+const setMigrating = (state, migrating) => state.updateOne({ migrating })
+
+const getMigrationDir = (state, migrationName) => {
+	if (!state || !state.lastRun) return "up"
+	if (state.lastRun === migrationName) return ""
+
+	const migrations = state.migrations.sort().map(m => m.title)
+	const migrationIndex = migrations.indexOf(migrationName)
+
+	return migrationIndex > -1
+		&& migrations.indexOf(state.lastRun) > migrationIndex
+		? "down"
+		: "up"
+}
+
+const create = state => ({
+	load: fn => fn(null, state),
+	save: async (set, fn) => {
+		try {
+			await state.updateOne({ ...set, migrating: false })
+			fn(null)
+		} catch (e) {
+			fn(e)
+		}
+	}
+})
+
+export default { init, setMigrating, getMigrationDir, create }

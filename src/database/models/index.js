@@ -5,15 +5,6 @@ import note from './note'
 import habit from './habit'
 
 // TODO: Make a createModels function instead of this object mutation abomination
-const models = {
-	// It shouldn't mutate this object
-	create: mongoose => {
-		models.migration = migration(mongoose)
-		models.user = user(mongoose)
-		models.mood = mood(mongoose)
-		models.note = note(mongoose)
-		models.habit = habit(mongoose)
-	},
-}
+const models = { migration, user, mood, note, habit }
 
 export default models
